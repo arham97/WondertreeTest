@@ -22,15 +22,22 @@ public class KillPlayer : MonoBehaviour
         print("COLLIDED");
         if (collision.collider.CompareTag("Player"))
         {
+            GameManager.instance.lives -= 1;
+            AudioManager.instance.deadS();
+
             pc.respawn();
+
         }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         print("COLLIDED");
-        if (collision.CompareTag("ground"))
+        if (collision.CompareTag("Player"))
         {
+            GameManager.instance.lives -= 1;
+            AudioManager.instance.deadS();
+
             pc.respawn();
         }
     }

@@ -20,7 +20,7 @@ public class Wonthis : MonoBehaviour
         if (player.transform.position.x > 94 && !done)
         {
             Instantiate(Particleswd, this.transform);
-            wiinnigscreen.SetActive(true);
+            GuiManager.instance.showWinning();
             done = true;
         };
     }

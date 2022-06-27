@@ -13,18 +13,24 @@ public class PlayerController : MonoBehaviour
     public float jumpAmount = 35;
     public float gravityScale = 10;
     public float fallingGravityScale = 40;
-    public float distToGround;
-    public LayerMask Groundlayer;
     public GameObject DeathFX;
     public bool grounded;
     public bool allow_input;
     public Transform checkpoint;
 
+
+    //gamemanager vars
+    // checkpoint
+    // score
+
+    // lives
+    // time
+
     void Start()
     {
         allow_input = true;
         Anim = this.gameObject.GetComponent<Animator>();
-        distToGround = this.GetComponent<Collider2D>().bounds.extents.y;
+
     }
 
     // Update is called once per frame
@@ -67,7 +73,7 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space) && grounded)
         {
-            print("Space pressed");
+            AudioManager.instance.jumpS();
             RB.AddForce(Vector2.up * jumpforce, ForceMode2D.Impulse);
 
             if (RB.velocity.y >= 0)
@@ -84,10 +90,21 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    //bool CheckGround()
+    //bool GroundCheck()
     //{
-       
-    //   //return Physics.Raycast(transform.position, -Vector3.up, distToGround+0.1f);
+    //    Debug.DrawRay(transform.position, Vector2.down * 0.1f);
+    //    RaycastHit hit;
+    //    if (Physics.Raycast(transform.position, Vector2.down, out hit, distToGround + 0.1f))
+    //    {
+    //        _slopeAngle = (Vector3.Angle(hit.normal, transform.forward) - 90);
+    //        return true;
+    //    }
+    //    else
+    //    {
+    //        grounded = false;
+    //        return false;
+    //    }
+
 
     //}
 
@@ -96,10 +113,7 @@ public class PlayerController : MonoBehaviour
         if (collision.CompareTag("ground"))
         {
             grounded = true;
-        }
-        else
-        {
-            grounded = false;
+            
         }
 
     }
@@ -107,10 +121,6 @@ public class PlayerController : MonoBehaviour
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.CompareTag("ground"))
-        {
-            grounded = false;
-        }
-        else
         {
             grounded = false;
         }
@@ -124,17 +134,22 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator Die()
     {
-        RB.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation;
-        this.GetComponent<SpriteRenderer>().color = new Vector4(0, 0, 0, 0); 
+        stopplayer();
         Instantiate(DeathFX, this.transform);
-        allow_input = false;
         yield return new WaitForSeconds(1.5f);
         transform.position = checkpoint.position;
+        this.GetComponent<BoxCollider2D>().enabled = true;
         allow_input = true;
         this.GetComponent<SpriteRenderer>().color = new Vector4(1,1,1,1);
         RB.isKinematic = false;
         RB.constraints = RigidbodyConstraints2D.FreezeRotation;
+    }
 
-
+    public void stopplayer()
+    {
+        RB.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation;
+        this.GetComponent<BoxCollider2D>().enabled = false;
+        this.GetComponent<SpriteRenderer>().color = new Vector4(0, 0, 0, 0);
+        allow_input = false;
     }
 }
